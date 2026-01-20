@@ -1,9 +1,9 @@
+import { ResumeUploadForm } from "@/components/resume-upload-form";
 
-
-export default function Page(){
-    return(
-        <div>
-            <h1>Home</h1>
-        </div>
-    )
+export default function Page() {
+  return (
+    <div className="p-6">
+      <ResumeUploadForm />
+    </div>
+  );
 }
