@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { HOME_URL, LOGIN_URL } from "./constants/app-routes";
+import { HOME_URL, LOGIN_URL, SIGNUP_URL } from "./constants/app-routes";
+
+const PUBLIC_ROUTES = [LOGIN_URL, SIGNUP_URL];
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
@@ -20,7 +22,7 @@ export async function middleware(req: NextRequest) {
           });
         },
       },
-    },
+    }
   );
 
   const {
@@ -29,13 +31,13 @@ export async function middleware(req: NextRequest) {
 
   const pathname = req.nextUrl.pathname;
 
-  // 🚫 Not logged in → go to login
-  if (!session && pathname !== LOGIN_URL) {
+  // 🚫 Not logged in → block protected routes
+  if (!session && !PUBLIC_ROUTES.includes(pathname)) {
     return NextResponse.redirect(new URL(LOGIN_URL, req.url));
   }
 
-  // 🔁 Logged in but accessing login → go home
-  if (session && pathname === LOGIN_URL) {
+  // 🔁 Logged in → block auth pages
+  if (session && PUBLIC_ROUTES.includes(pathname)) {
     return NextResponse.redirect(new URL(HOME_URL, req.url));
   }
 
